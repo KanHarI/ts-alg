@@ -3,6 +3,7 @@
   "packageManager": "yarn@3.2.0",
   "devDependencies": {
     "@types/jest": "^27.5.0",
+    "@types/lodash": "^4.14.190",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
     "eslint": "^8.14.0",
@@ -24,5 +25,8 @@
     "test": "jest"
   },
   "main": "lib/index.js",
-  "license": "mit"
+  "license": "mit",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
 }

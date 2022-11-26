@@ -1,0 +1,1 @@
+{"version":3,"file":"sanity.test.js","sourceRoot":"./src/index.ts/","sources":["../tests/sanity.test.ts"],"names":[],"mappings":";;AAAA,gCAA2B;AAE3B,IAAI,CAAC,aAAa,EAAE,GAAG,EAAE;IACvB,MAAM,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,CAAC,CAAC,CAAC;AACpB,CAAC,CAAC,CAAC;AAEH,IAAI,CAAC,qBAAqB,EAAE,GAAG,EAAE;IAC/B,MAAM,CAAC,OAAC,CAAC,CAAC,IAAI,CAAC,CAAC,CAAC,CAAC;AACpB,CAAC,CAAC,CAAC"}
