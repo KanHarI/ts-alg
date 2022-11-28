@@ -1,17 +1,15 @@
+import { performance } from "perf_hooks";
+
 import {
   factorize,
   is_prime,
   populate_primes_up_to,
+  PRIMES_UP_TO_100,
   reset_primes_population,
 } from "../src/number_theory/primes";
 import { d } from "../src/number_theory/sigma";
 
-const PRIMES_UP_TO_100 = [
-  2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
-  73, 79, 83, 89, 97,
-];
-
-const MERSENNE_EXPONENTS = [2, 3, 5, 7, 13];
+const MERSENNE_PRIMES = [2, 3, 5, 7, 13];
 
 const AMICABLE_NUMBERS: Array<[number, number]> = [
   [220, 284],
@@ -31,10 +29,13 @@ describe("Number theory module tests", () => {
     expect(factorize(98)).toStrictEqual({ "2": 1, "7": 2 });
   });
 
+  // A perfect number is a number equal to it's sum of divisors
   it("Perfect numbers test", () => {
-    const perfect_numbers = MERSENNE_EXPONENTS.map(
-      (mersenne_exponent) =>
-        2 ** (mersenne_exponent - 1) * (2 ** mersenne_exponent - 1)
+    // All even perfect numbers are of the form
+    // 2^(p - 1) * (2^p - 1)
+    // Were p is a mersenne prime
+    const perfect_numbers = MERSENNE_PRIMES.map(
+      (mersenne_prime) => 2 ** (mersenne_prime - 1) * (2 ** mersenne_prime - 1)
     );
     expect(perfect_numbers.includes(6)).toBe(true);
     expect(perfect_numbers.includes(28)).toBe(true);
@@ -45,6 +46,8 @@ describe("Number theory module tests", () => {
     }
   });
 
+  // Amicable numbers are a pair of numbers, each of which is the sum of the
+  // proper divisors of the other
   it("Amicable numbers", () => {
     for (const [n1, n2] of AMICABLE_NUMBERS) {
       expect(d(n1)).toBe(n2);
