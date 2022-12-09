@@ -8,6 +8,7 @@ on:
 jobs:
   summarize:
     runs-on: ubuntu-latest
+    permissions: write-all
 
     steps:
       - uses: KanHarI/gpt-commit-summarizer@master
