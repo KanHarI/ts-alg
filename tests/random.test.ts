@@ -160,7 +160,8 @@ describe("random-sanity", () => {
   });
 
   // Test that the utility of random ints modulu some primes is distributed
-  // as expected (uniformly)
+  // as expected (uniformly). This should be true as the ceiling of the
+  // random number generator is much larger than the primes.
   it("Random modulu some primes", () => {
     const seed = "TEST_SEED";
     const reproducible_rng = new SeededRng(seed);
