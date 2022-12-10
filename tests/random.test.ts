@@ -1,11 +1,13 @@
+import { SeededRng } from "../src/seeded_rng/SeededRng";
+
 const NUM_CHECKS_SANITY = 100;
 const NUM_CHECKS_UTILITY_INT = 100_000;
 const NUM_CHECKS_UTILITY_FLOAT = 10_000;
 const NUM_CHECKS_MODULU = 100_000;
 const NUM_REPRODUCABILIY_TESTS = 10_000;
 
-// Fail approximately 1/1000 times
-// (two-sided distribution)
+Fail approximately 1/1000 times
+(two-sided distribution)
 const P_VALUE_MIN_FOR_TESTS = 0.0005;
 
 abstract class Distribution {
@@ -114,7 +116,7 @@ function gaussian_z_score(
   return (sum / n - distribution.utility()) / approximate_std;
 }
 
-// https://stackoverflow.com/questions/16194730/seeking-a-statistical-javascript-function-to-return-p-value-from-a-z-score
+https://stackoverflow.com/questions/16194730/seeking-a-statistical-javascript-function-to-return-p-value-from-a-z-score
 function approximate_z_score_to_p_value(z: number): number {
   //z == number of standard deviations from the mean
 
@@ -157,3 +159,14 @@ function approximate_gaussian_percentile(
   const z_score = gaussian_z_score(sum, n, distribution);
   return approximate_z_score_to_p_value(z_score);
 }
+
+describe("random-sanity", () => {
+  it("random-int-sanity", () => {
+    const reproducible_rng = new SeededRng("TEST_SEED");
+    for (let i = 0; i < NUM_CHECKS_SANITY; ++i) {
+      const random_num = reproducible_rng.get_random_int(10);
+      expect(random_num).toBeGreaterThanOrEqual(0);
+      expect(random_num).toBeLessThan(10);
+    }
+  });
+});
