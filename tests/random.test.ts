@@ -1,13 +1,13 @@
+import { range } from "lodash";
+
+import { PRIMES_UP_TO_100 } from "../src/number_theory/primes";
 import { SeededRng } from "../src/seeded_rng/SeededRng";
 
 const NUM_CHECKS_SANITY = 100;
-const NUM_CHECKS_UTILITY_INT = 100_000;
 const NUM_CHECKS_UTILITY_FLOAT = 10_000;
 const NUM_CHECKS_MODULU = 100_000;
-const NUM_REPRODUCABILIY_TESTS = 10_000;
 
-Fail approximately 1/1000 times
-(two-sided distribution)
+// Fail approximately 1/1000 times (two-sided distribution)
 const P_VALUE_MIN_FOR_TESTS = 0.0005;
 
 abstract class Distribution {
@@ -29,34 +29,6 @@ abstract class Distribution {
 
   protected abstract _utility(): number;
   protected abstract _variance(): number;
-}
-
-class IntegralRange extends Distribution {
-  public _min: number;
-  public _max: number;
-
-  constructor(max: number, min = 0) {
-    super();
-    this._min = min;
-    this._max = max;
-  }
-
-  protected _utility(): number {
-    return (this._max + this._min) / 2;
-  }
-
-  protected _variance(): number {
-    if (this._max === this._min) {
-      return 0;
-    }
-    let sample_variance = 0;
-    const utility = this.utility();
-    const num_samples = this._max - this._min;
-    for (let i = this._min; i <= this._max; ++i) {
-      sample_variance += (i - utility) ** 2 / num_samples;
-    }
-    return sample_variance;
-  }
 }
 
 class FloatRange extends Distribution {
@@ -90,7 +62,7 @@ class EnumeratedDistribution extends Distribution {
     let utility = 0;
     for (const num_str of Object.keys(this._weighed_values)) {
       const num = Number(num_str);
-      utility += num * this._weighed_values[num];
+      utility += num * (this._weighed_values[num] ?? 0);
     }
     return utility;
   }
@@ -100,7 +72,7 @@ class EnumeratedDistribution extends Distribution {
     let variance = 0;
     for (const num_str of Object.keys(this._weighed_values)) {
       const num = Number(num_str);
-      variance += (num - utility) ** 2 * this._weighed_values[num];
+      variance += (num - utility) ** 2 * (this._weighed_values[num] ?? 0);
     }
     return variance;
   }
@@ -116,7 +88,7 @@ function gaussian_z_score(
   return (sum / n - distribution.utility()) / approximate_std;
 }
 
-https://stackoverflow.com/questions/16194730/seeking-a-statistical-javascript-function-to-return-p-value-from-a-z-score
+//stackoverflow.com/questions/16194730/seeking-a-statistical-javascript-function-to-return-p-value-from-a-z-score
 function approximate_z_score_to_p_value(z: number): number {
   //z == number of standard deviations from the mean
 
@@ -167,6 +139,62 @@ describe("random-sanity", () => {
       const random_num = reproducible_rng.get_random_int(10);
       expect(random_num).toBeGreaterThanOrEqual(0);
       expect(random_num).toBeLessThan(10);
+    }
+  });
+
+  it("Random float utility", () => {
+    const seed = "TEST_SEED";
+    const reproducible_rng = new SeededRng(seed);
+    let sum = 0;
+    // eslint-disable-next-line no-unused-vars
+    for (const _ of range(NUM_CHECKS_UTILITY_FLOAT)) {
+      sum += reproducible_rng.get_random_64bit_float();
+    }
+    const p_value = approximate_gaussian_percentile(
+      sum,
+      NUM_CHECKS_UTILITY_FLOAT,
+      new FloatRange()
+    );
+    expect(p_value).toBeGreaterThan(P_VALUE_MIN_FOR_TESTS);
+    expect(p_value).toBeLessThan(1 - P_VALUE_MIN_FOR_TESTS);
+  });
+
+  // Test that the utility of random ints modulu some primes is distributed
+  // as expected (uniformly)
+  it("Random modulu some primes", () => {
+    const seed = "TEST_SEED";
+    const reproducible_rng = new SeededRng(seed);
+    for (const prime of PRIMES_UP_TO_100) {
+      const expected_distribution = new EnumeratedDistribution({
+        0: (prime - 1) / prime,
+        1: 1 / prime,
+      });
+      const equivalence_classes: Array<number> = Array.from(range(prime)).map(
+        // eslint-disable-next-line no-unused-vars
+        (_) => 0
+      );
+
+      // eslint-disable-next-line no-unused-vars
+      for (const _ of range(NUM_CHECKS_MODULU)) {
+        const next_output = reproducible_rng.get_random_32bit_int();
+        equivalence_classes[next_output % prime]++;
+      }
+      for (const equivalence_class_cardinality of equivalence_classes) {
+        const p_value = approximate_gaussian_percentile(
+          equivalence_class_cardinality,
+          NUM_CHECKS_MODULU,
+          expected_distribution
+        );
+        // for the P value - we have to split the error between all the primes
+        // to fail once 1/P_MIN times, and split every prime into the
+        // number of equivalence classes modulu it
+        expect(p_value).toBeGreaterThan(
+          P_VALUE_MIN_FOR_TESTS / (PRIMES_UP_TO_100.length * prime)
+        );
+        expect(p_value).toBeLessThan(
+          1 - P_VALUE_MIN_FOR_TESTS / (PRIMES_UP_TO_100.length * prime)
+        );
+      }
     }
   });
 });
