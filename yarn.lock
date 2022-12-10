@@ -945,6 +945,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4.14.190":
+  version: 4.14.190
+  resolution: "@types/lodash@npm:4.14.190"
+  checksum: 353a55a1222a57224ead8bd3379fabb2e3e3f6685f599c48b1b66f099d8e9e015e6c6352c6e2275954004c3bb510377804c63117233c6f187700b6ab78adfa02
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 17.0.31
   resolution: "@types/node@npm:17.0.31"
@@ -3558,6 +3565,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash@npm:4.17.21"
+  checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^6.0.0":
   version: 6.0.0
   resolution: "lru-cache@npm:6.0.0"
@@ -4708,6 +4722,7 @@ __metadata:
   resolution: "ts-alg@workspace:."
   dependencies:
     "@types/jest": ^27.5.0
+    "@types/lodash": ^4.14.190
     "@typescript-eslint/eslint-plugin": ^5.22.0
     "@typescript-eslint/parser": ^5.22.0
     eslint: ^8.14.0
@@ -4716,6 +4731,7 @@ __metadata:
     eslint-plugin-prettier: ^4.0.0
     eslint-plugin-simple-import-sort: ^7.0.0
     jest: ^28.0.3
+    lodash: ^4.17.21
     prettier: ^2.6.2
     ts-jest: ^28.0.1
     ts-node: ^10.7.0
